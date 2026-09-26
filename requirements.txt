@@ -1,0 +1,5 @@
+Flask>=2.2.2
+Flask-Reuploaded>=1.4.0
+indic_transliteration>=2.3.10
+python_Levenshtein>=0.12.2
+sanskrit_text>=0.2.1

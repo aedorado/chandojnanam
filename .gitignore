@@ -1,0 +1,6 @@
+client_secret.json
+*.log
+settings.sample.py
+**/__pycache__/**
+
+
