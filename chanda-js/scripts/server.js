@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const ROOT_DIR = path.resolve(__dirname, "..");
 
 const PORT = process.env.PORT || 3000;
 
@@ -23,10 +24,10 @@ const server = http.createServer((req, res) => {
   let reqPath = decodeURI(req.url.split("?")[0]);
   if (reqPath === "/") reqPath = "/index.html";
 
-  const filePath = path.join(__dirname, reqPath);
+  const filePath = path.join(ROOT_DIR, reqPath);
 
   // Security: prevent directory traversal
-  if (!filePath.startsWith(__dirname)) {
+  if (!filePath.startsWith(ROOT_DIR)) {
     res.writeHead(403);
     res.end("Forbidden");
     return;

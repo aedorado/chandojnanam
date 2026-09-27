@@ -43,8 +43,7 @@
   ],
   "scripts": {
     "build": "echo 'Static build ready'",
-    "start": "node server.js",
-    "dev": "node server.js",
+    "dev": "node scripts/server.js",
     "test": "node --test test/test.js"
   }
 }

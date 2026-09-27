@@ -1,14 +1,10 @@
 {
+  "outputDirectory": "chanda-js",
   "cleanUrls": true,
   "rewrites": [
     {
-      "source": "/",
-      "destination": "/chanda-js/index.html"
-    },
-    {
-      "source": "/((?!chanda-js/).*)",
-      "destination": "/chanda-js/$1"
+      "source": "/chanda-js/(.*)",
+      "destination": "/$1"
     }
   ]
 }
-
