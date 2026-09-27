@@ -1,8 +1,14 @@
 {
+  "cleanUrls": true,
   "rewrites": [
     {
-      "source": "/(.*)",
-      "destination": "/api/index"
+      "source": "/",
+      "destination": "/chanda-js/index.html"
+    },
+    {
+      "source": "/((?!chanda-js/).*)",
+      "destination": "/chanda-js/$1"
     }
   ]
 }
+
