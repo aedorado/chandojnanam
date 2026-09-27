@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="sa">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chandojñānam | Sanskrit Meter Identification & Scansion Engine</title>
+  <meta name="description" content="Instant Sanskrit meter identification, scansion, Laghu-Guru marking, and prosodic analysis running 100% in the browser or as an npm library.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@300;400;500;600;700&family=Noto+Serif+Devanagari:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Top Navigation Header -->
+    <header class="app-header">
+      <div class="header-brand">
+        <div class="logo-mark">छं</div>
+        <div>
+          <h1 class="logo-title">छन्दोज्ञानम् <span class="logo-sub">Chandojñānam</span></h1>
+          <p class="logo-tagline">Sanskrit Meter Identification & Scansion Engine</p>
+        </div>
+      </div>
+      <nav class="nav-tabs" id="main-nav-tabs">
+        <button class="nav-tab active" data-tab="tab-scansion" id="nav-scansion-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+          छन्दः परीक्षणम् (Scanner)
+        </button>
+        <button class="nav-tab" data-tab="tab-catalog" id="nav-catalog-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          वृत्तकोशः (Meter Catalog)
+        </button>
+        <button class="nav-tab" data-tab="tab-library" id="nav-library-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+          Library API & Code
+        </button>
+      </nav>
+      <div class="header-actions">
+        <span class="badge-runtime">⚡ 100% Client-Side JS</span>
+      </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="main-content">
+      <!-- TAB 1: SCANSION SCANNER -->
+      <section id="tab-scansion" class="tab-pane active">
+        <div class="scansion-grid">
+          <!-- Input Column -->
+          <div class="panel input-panel">
+            <div class="panel-header">
+              <div class="panel-title-wrap">
+                <h2 class="panel-title">श्लोक / पाद निवेशः (Input Verse)</h2>
+                <span class="panel-hint">Type in Sanskrit or English (IAST / ITRANS / HK)</span>
+              </div>
+              <div class="controls-row">
+                <div class="select-group">
+                  <label for="input-scheme-select">Lipi (Script):</label>
+                  <select id="input-scheme-select" class="form-select">
+                    <option value="auto">Auto Detect</option>
+                    <option value="devanagari">Devanagari (देवनागरी)</option>
+                    <option value="iast">IAST (mātā rāmo)</option>
+                    <option value="itrans">ITRANS (mAtA rAmo)</option>
+                    <option value="hk">Harvard-Kyoto</option>
+                    <option value="slp1">SLP1</option>
+                  </select>
+                </div>
+                <div class="select-group">
+                  <label for="analysis-mode-select">Mode:</label>
+                  <select id="analysis-mode-select" class="form-select">
+                    <option value="verse">Verse (पादचतुष्टयम्)</option>
+                    <option value="line">Line-by-Line (पादशः)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Verse Preset Quick Buttons -->
+            <div class="preset-selector">
+              <span class="preset-label">Classic Verses:</span>
+              <div class="preset-pills" id="preset-pills-container">
+                <!-- Dynamically populated from EXAMPLES -->
+              </div>
+            </div>
+
+            <!-- Text Input Area -->
+            <div class="textarea-container">
+              <textarea
+                id="verse-input-textarea"
+                class="verse-textarea"
+                placeholder="यदा यदा हि धर्मस्य ग्लानिर्भवति भारत ।
+अभ्युत्थानमधर्मस्य तदात्मानं सृजाम्यहम् ॥"
+                rows="7"
+                spellcheck="false"
+              ></textarea>
+              <div class="textarea-footer">
+                <span class="char-count" id="input-meta-info">0 lines | 0 chars</span>
+                <div class="toggle-group">
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="fuzzy-toggle" checked>
+                    <span class="toggle-slider"></span>
+                    <span class="toggle-label">Fuzzy Match (दोषपरीक्षणम्)</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-bar">
+              <button id="clear-input-btn" class="btn btn-secondary">Clear</button>
+              <button id="copy-json-btn" class="btn btn-secondary">Copy JSON</button>
+              <button id="copy-text-btn" class="btn btn-secondary">Copy Formatted</button>
+            </div>
+          </div>
+
+          <!-- Output Results Column -->
+          <div class="panel output-panel">
+            <div class="panel-header">
+              <h2 class="panel-title">छन्दः विश्लेषणम् (Prosodic Scansion)</h2>
+              <div class="legend-badges">
+                <span class="legend-badge laghu"><span class="syllable-mark">।</span> लघु (Laghu) = 1</span>
+                <span class="legend-badge guru"><span class="syllable-mark">ऽ</span> गुरु (Guru) = 2</span>
+              </div>
+            </div>
+
+            <!-- Identified Meter Banner -->
+            <div id="meter-summary-banner" class="meter-banner">
+              <div class="banner-spinner" id="banner-loading" style="display: none;">Analyzing...</div>
+              <div class="banner-content" id="banner-content">
+                <div class="banner-top">
+                  <span class="meter-badge exact" id="banner-match-type">Exact Match</span>
+                  <span class="meter-jaati" id="banner-jaati-badge">अनुष्टुप् (8 अक्षराणि)</span>
+                </div>
+                <h3 class="identified-meter-name" id="banner-meter-name">प्रतीक्ष्यताम्... (Type a verse)</h3>
+                <div class="meter-quick-stats" id="banner-stats">
+                  <!-- Injected via JS -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Scanned Lines Breakdown -->
+            <div class="scansion-results-container" id="scansion-lines-container">
+              <!-- Dynamically generated line cards -->
+            </div>
+
+            <!-- Summary Stats Card -->
+            <div class="summary-card" id="summary-stats-card" style="display: none;">
+              <h4 class="summary-title">विस्तृत-सांख्यिकी (Summary Statistics)</h4>
+              <div class="summary-grid" id="summary-grid-content"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: METER CATALOG -->
+      <section id="tab-catalog" class="tab-pane">
+        <div class="catalog-header-panel">
+          <div class="catalog-search-row">
+            <input
+              type="text"
+              id="catalog-search-input"
+              class="catalog-search"
+              placeholder="Search 200+ meters by name (e.g. इन्द्रवज्रा, Mandakranta, शार्दूलविक्रीडित, 11 letters)..."
+            >
+            <div class="catalog-filters">
+              <button class="filter-pill active" data-filter="all">All (सर्वाणि)</button>
+              <button class="filter-pill" data-filter="sama">समवृत्तानि (Sama)</button>
+              <button class="filter-pill" data-filter="ardhasama">अर्धसमवृत्तानि (Ardhasama)</button>
+              <button class="filter-pill" data-filter="vishama">विषमवृत्तानि (Vishama)</button>
+              <button class="filter-pill" data-filter="matra">मात्रावृत्तानि (Matra)</button>
+            </div>
+          </div>
+          <div class="catalog-count" id="catalog-count-badge">Showing 200+ meters</div>
+        </div>
+
+        <div class="catalog-grid" id="catalog-cards-container">
+          <!-- Populated from CHANDA database -->
+        </div>
+      </section>
+
+      <!-- TAB 3: LIBRARY USAGE & API -->
+      <section id="tab-library" class="tab-pane">
+        <div class="library-panel">
+          <div class="lib-hero">
+            <h2 class="lib-title">ChandaJS Library Reference</h2>
+            <p class="lib-desc">
+              <code>chanda-js</code> is a zero-dependency, pure JavaScript/TypeScript library for Sanskrit meter identification,
+              scansion, transliteration, and error correction. It runs identically in Node.js, Deno, Bun, and browsers.
+            </p>
+          </div>
+
+          <div class="code-examples-grid">
+            <!-- Example 1: Basic Scansion -->
+            <div class="code-card">
+              <div class="code-header">
+                <span>1. Identify Meter from Sanskrit Line</span>
+                <button class="btn-copy-code" data-code-id="code-ex-1">Copy</button>
+              </div>
+              <pre><code id="code-ex-1">import { Chanda } from "chanda-js";
+
+const chanda = new Chanda();
+
+// Single line identification
+const result = chanda.identifyLine("नमस्ते सदा वत्सले मातृभूमे");
+
+console.log(result.display_chanda);   // "भुजङ्गप्रयात"
+console.log(result.display_gana);     // "य य य य"
+console.log(result.display_lg.join("")); // "LGG LGG LGG LGG" (।ऽऽ ।ऽऽ ।ऽऽ ।ऽऽ)
+console.log(result.matra);            // 20 morae
+console.log(result.length);           // 12 syllables</code></pre>
+            </div>
+
+            <!-- Example 2: Full Verse Identification -->
+            <div class="code-card">
+              <div class="code-header">
+                <span>2. Full 4-Pada Verse Scansion & Scoring</span>
+                <button class="btn-copy-code" data-code-id="code-ex-2">Copy</button>
+              </div>
+              <pre><code id="code-ex-2">import { Chanda } from "chanda-js";
+
+const chanda = new Chanda();
+const verse = `
+लोकाभिरामं रणरङ्गधीरं
+राजीवनेत्रं रघुवंशनाथम्।
+कारुण्यरूपं करुणाकरं तं
+श्रीरामचन्द्रं शरणं प्रपद्ये॥
+`;
+
+const analysis = chanda.identifyFromText(verse, { verse: true, fuzzy: true });
+
+console.log("Best Matching Meter:", analysis.result.verse[0].chanda[0]);
+console.log(analysis.formattedText);</code></pre>
+            </div>
+
+            <!-- Example 3: Transliteration -->
+            <div class="code-card">
+              <div class="code-header">
+                <span>3. Built-in Sanscript Transliteration</span>
+                <button class="btn-copy-code" data-code-id="code-ex-3">Copy</button>
+              </div>
+              <pre><code id="code-ex-3">import { transliterate, detect } from "chanda-js";
+
+// Transliterate IAST to Devanagari
+const deva = transliterate("mātā rāmo matpitā rāmacandraḥ", "iast", "devanagari");
+console.log(deva); // "माता रामो मत्पिता रामचन्द्रः"
+
+// Transliterate Devanagari to ITRANS
+const itrans = transliterate(deva, "devanagari", "itrans");
+console.log(itrans); // "mAtA rAmo matpitA rAmachandraH"</code></pre>
+            </div>
+
+            <!-- Example 4: Syllabification & Laghu-Guru -->
+            <div class="code-card">
+              <div class="code-header">
+                <span>4. Sanskrit Akshara & Laghu-Guru Marker</span>
+                <button class="btn-copy-code" data-code-id="code-ex-4">Copy</button>
+              </div>
+              <pre><code id="code-ex-4">import { getSyllables, isLaghu, markLg } from "chanda-js";
+
+const chanda = new Chanda();
+const { flat_syllables, lg_marks } = chanda.markLg("कवि भारतः");
+
+console.log(flat_syllables); // ["क", "वि", "भा", "र", "तः"]
+console.log(lg_marks);       // ["L", "L", "G", "L", "G"]</code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <div class="footer-inner">
+        <p>
+          छन्दोज्ञानम् (Chandojñānam) • Pure JavaScript Engine & Library •
+          Original Computational Model by <a href="https://github.com/hrishikeshrt" target="_blank" rel="noopener">Hrishikesh Terdalkar</a>
+        </p>
+        <p class="footer-note">Free & Open Source under GNU General Public License v3.0 • Ready for 1-Click Vercel Deployment</p>
+      </div>
+    </footer>
+  </div>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

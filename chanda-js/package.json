@@ -1,0 +1,49 @@
+{
+  "name": "chanda-js",
+  "version": "1.0.0",
+  "description": "Sanskrit Meter Identification, Scansion and Prosody Engine (Chandojñānam) in Pure JavaScript",
+  "keywords": [
+    "sanskrit",
+    "chanda",
+    "prosody",
+    "meter",
+    "scansion",
+    "chandojnanam",
+    "indic",
+    "transliteration",
+    "devanagari",
+    "iast"
+  ],
+  "author": "Anurag / Hrishikesh Terdalkar",
+  "license": "GPL-3.0",
+  "type": "module",
+  "main": "./src/index.js",
+  "module": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "import": "./src/index.js",
+      "default": "./src/index.js"
+    },
+    "./sanskrit": {
+      "import": "./src/sanskrit.js"
+    },
+    "./sanscript": {
+      "import": "./src/sanscript.js"
+    },
+    "./data": {
+      "import": "./src/data/chandaData.js"
+    }
+  },
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "test": "node --test test/test.js"
+  }
+}
